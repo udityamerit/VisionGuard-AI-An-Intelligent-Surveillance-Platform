@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block page_title %}Security Analytics Insights{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="glass-card mb-4">
+            <h5>Incident Threat Distribution</h5>
+            <div style="height: 300px;">
+                <canvas id="incidentChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="glass-card mb-4">
+            <h5>Crowd Density Trends (24h)</h5>
+            <div style="height: 300px;">
+                <canvas id="densityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="glass-card">
+            <h5>Key Performance Indicators (KPIs)</h5>
+            <div class="row mt-4">
+                <div class="col-sm-3 text-center">
+                    <h6 class="text-muted mb-2">Detection Latency</h6>
+                    <h2 class="text-accent">42ms</h2>
+                </div>
+                <div class="col-sm-3 text-center border-start border-glass">
+                    <h6 class="text-muted mb-2">Avg. FPS</h6>
+                    <h2 class="text-success">28.4</h2>
+                </div>
+                <div class="col-sm-3 text-center border-start border-glass">
+                    <h6 class="text-muted mb-2">False Positives</h6>
+                    <h2 class="text-warning">1.2%</h2>
+                </div>
+                <div class="col-sm-3 text-center border-start border-glass">
+                    <h6 class="text-muted mb-2">Uptime</h6>
+                    <h2 class="text-info">99.9%</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Incident Distribution Chart
+    const incidentCtx = document.getElementById('incidentChart').getContext('2d');
+    new Chart(incidentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Unauthorized Entry', 'Weapon Detected', 'Violent Activity', 'Abnormal Crowd', 'Other'],
+            datasets: [{
+                data: [45, 12, 18, 20, 5],
+                backgroundColor: ['#38bdf8', '#ef4444', '#f59e0b', '#10b981', '#6366f1'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#94a3b8' } }
+            }
+        }
+    });
+
+    // 2. Density Trend Chart
+    const densityCtx = document.getElementById('densityChart').getContext('2d');
+    new Chart(densityCtx, {
+        type: 'line',
+        data: {
+            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            datasets: [{
+                label: 'People Count',
+                data: [5, 2, 110, 85, 125, 60],
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

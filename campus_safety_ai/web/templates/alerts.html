@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block page_title %}Active & Logged Alerts{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Incident History</h5>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Export CSV</button>
+            </div>
+            
+            {% if not alerts %}
+            <div class="text-center py-5">
+                <i class="bi bi-shield-check text-success display-1"></i>
+                <h4 class="mt-4">All Clear</h4>
+                <p class="text-muted">No security threats have been logged yet.</p>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>DateTime</th>
+                            <th>Cam ID</th>
+                            <th>Threat Type</th>
+                            <th>Evidence Snapshot</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts %}
+                        <tr>
+                            <td>{{ alert.timestamp }}</td>
+                            <td>{{ alert.camera_id }}</td>
+                            <td>
+                                <span class="badge {% if 'WEAPON' in alert.threat_type or 'VIOLENCE' in alert.threat_type %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ alert.threat_type }}
+                                </span>
+                            </td>
+                            <td>
+                                <img src="{{ url_for('static', filename='images/alerts/' + alert.screenshot) }}" 
+                                     class="thumbnail-alert img-thumbnail" 
+                                     alt="Preview"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal"
+                                     onclick="showImage('{{ url_for('static', filename='images/alerts/' + alert.screenshot) }}')">
+                            </td>
+                            <td>
+                                <button class="btn btn-outline-info btn-sm">Review</button>
+                                <button class="btn btn-outline-danger btn-sm">Archive</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Simple Modal for enlarged image -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark border-glass">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center pt-0">
+        <img id="modalImg" src="" class="img-fluid rounded" alt="Full Evidence Capture">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showImage(src) {
+    document.getElementById('modalImg').src = src;
+}
+</script>
+{% endblock %}

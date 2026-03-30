@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block page_title %}Filter Lab — Vision Processing{% endblock %}
+
+{% block content %}
+<style>
+  /* ── Layout ────────────────────────────────────────── */
+  .lab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 900px) { .lab-grid { grid-template-columns: 1fr; } }
+
+  .feed-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .feed-card-header {
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.2);
+  }
+  .feed-card-header h6 { margin: 0; font-weight: 600; letter-spacing: 0.5px; }
+  .feed-img {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    background: #000;
+    min-height: 240px;
+    flex: 1;
+  }
+
+  /* ── Filter Panel ──────────────────────────────────── */
+  .filter-panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .filter-panel h5 {
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+  }
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+  .filter-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.9rem 0.5rem;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    user-select: none;
+  }
+  .filter-btn i { font-size: 1.4rem; }
+  .filter-btn:hover {
+    border-color: rgba(56,189,248,0.5);
+    background: rgba(56,189,248,0.08);
+    color: #38bdf8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(56,189,248,0.15);
+  }
+  .filter-btn.active {
+    border-color: #38bdf8;
+    background: rgba(56,189,248,0.15);
+    color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
+  }
+  .filter-btn.active i { filter: drop-shadow(0 0 6px #38bdf8); }
+
+  /* ── Filter Icons map ──────────────────────────────── */
+
+  /* ── Info Bar ──────────────────────────────────────── */
+  .info-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(56,189,248,0.08);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+  }
+  .info-bar .active-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(56,189,248,0.2);
+    color: #38bdf8;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Download Section ──────────────────────────────── */
+  .download-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .download-info h6 { margin: 0 0 0.3rem; font-weight: 600; }
+  .download-info p { margin: 0; font-size: 0.82rem; color: #64748b; }
+  .btn-download {
+    padding: 0.7rem 1.8rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.25s ease;
+    text-decoration: none;
+  }
+  .btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(99,102,241,0.4);
+    color: #fff;
+  }
+  .btn-download:disabled, .btn-download.loading {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+  }
+  .spinner-sm {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .btn-download.loading .spinner-sm { display: inline-block; }
+  .btn-download.loading .dl-icon { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Pulse dot ─────────────────────────────────────── */
+  .dot-live {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    display: inline-block;
+    animation: pulse-dot 1.4s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* ── Upload Card ───────────────────────────────────── */
+  .upload-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .upload-drop-zone {
+    flex: 1;
+    min-width: 220px;
+    border: 2px dashed rgba(99,102,241,0.4);
+    border-radius: 12px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(99,102,241,0.04);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    position: relative;
+  }
+  .upload-drop-zone:hover, .upload-drop-zone.dragover {
+    border-color: #6366f1;
+    background: rgba(99,102,241,0.12);
+    color: #a5b4fc;
+  }
+  .upload-drop-zone i { font-size: 2rem; display: block; margin-bottom: 0.4rem; color: #6366f1; }
+  .upload-drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-meta {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .upload-meta h6 { margin: 0; font-weight: 600; }
+  .upload-meta p  { margin: 0; font-size: 0.8rem; color: #64748b; }
+  #upload-status {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    display: none;
+  }
+  #upload-status.show { display: inline-block; }
+  #upload-status.info    { background: rgba(56,189,248,0.12); color: #38bdf8; }
+  #upload-status.success { background: rgba(34,197,94,0.12);  color: #22c55e; }
+  #upload-status.error   { background: rgba(239,68,68,0.12);  color: #f87171; }
+  .upload-progress {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.07);
+    overflow: hidden;
+    display: none;
+  }
+  .upload-progress.show { display: block; }
+  .upload-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6366f1, #38bdf8);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+  }
+  .btn-upload {
+    padding: 0.65rem 1.6rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+  }
+  .btn-upload:disabled { opacity: 0.55; cursor: wait; transform: none; box-shadow: none; }
+  .current-source-badge {
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    background: rgba(99,102,241,0.15);
+    color: #a5b4fc;
+    font-weight: 500;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+
+<!-- ── Upload Video Card ──────────────────────────────────────────────────── -->
+<div class="upload-card">
+
+  <!-- Drop Zone / File Picker -->
+  <div class="upload-drop-zone" id="upload-drop-zone"
+       ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+       ondrop="handleDrop(event)">
+    <input type="file" id="video-file-input" accept="video/mp4,video/avi,video/quicktime,.mp4,.avi,.mov"
+           onchange="handleFileSelected(this.files)">
+    <i class="bi bi-film"></i>
+    <strong style="color:#a5b4fc;">Click or drag &amp; drop your video</strong>
+    <span style="display:block;margin-top:0.2rem;font-size:0.75rem;">MP4, AVI, MOV supported</span>
+  </div>
+
+  <!-- Info + Progress -->
+  <div class="upload-meta">
+    <h6><i class="bi bi-cloud-upload me-2 text-indigo"></i>Upload Video to Filter Lab</h6>
+    <p>Upload any video — it will instantly appear in both feeds, ready for filter processing and download.</p>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <span id="upload-status">Idle</span>
+      <span class="current-source-badge" id="current-source-label">Source: webcam / none</span>
+    </div>
+    <div class="upload-progress" id="upload-progress">
+      <div class="upload-progress-bar" id="upload-progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Upload Button -->
+  <button class="btn-upload" id="upload-btn" onclick="triggerFileInput()" disabled>
+    <i class="bi bi-upload"></i>
+    <span id="upload-btn-text">Select File First</span>
+  </button>
+</div>
+
+<!-- Info bar -->
+<div class="info-bar">
+  <span class="dot-live"></span>
+  <span>Clean video &nbsp;|&nbsp; No object detection &nbsp;|&nbsp; Active Filter:
+    <span class="active-badge" id="active-filter-label">{{ filters[active_filter] }}</span>
+  </span>
+  <span class="ms-auto text-xs">
+    <i class="bi bi-cpu me-1"></i>
+    <span id="yolo-badge" class="text-info fw-semibold">YOLOv11 Active</span>
+  </span>
+</div>
+
+<!-- Side-by-side feeds -->
+<div class="lab-grid">
+  <!-- Original -->
+  <div class="feed-card">
+    <div class="feed-card-header">
+      <h6><i class="bi bi-camera-video-fill text-success me-2"></i>Original Feed</h6>
+      <span class="badge bg-success">LIVE</span>
+    </div>
+    <img id="original-feed" src="/video_feed_clean" class="feed-img" alt="Original Feed">
+  </div>
+
+  <!-- Processed -->
+  <div class="feed-card">
+    <div class="feed-card-header">
+      <h6><i class="bi bi-stars text-info me-2"></i>Processed Feed</h6>
+      <span class="badge" id="filter-badge" style="background:rgba(56,189,248,0.2);color:#38bdf8;">
+        {{ filters[active_filter] }}</span>
+    </div>
+    <img id="processed-feed" src="{{ url_for('video_feed_processed') }}" class="feed-img" alt="Processed Feed">
+  </div>
+</div>
+
+<!-- Filter selector -->
+<div class="filter-panel">
+  <h5><i class="bi bi-sliders me-2"></i>Select Processing Algorithm</h5>
+  <div class="filter-grid" id="filter-grid">
+
+    {% set icons = {
+      'original':  'bi-camera-video',
+      'grayscale': 'bi-circle-half',
+      'heatmap':   'bi-thermometer-sun',
+      'canny':     'bi-border-outer',
+      'sketch':    'bi-pencil',
+      'cartoon':   'bi-brush',
+      'emboss':    'bi-layers',
+      'negative':  'bi-moon-stars'
+    } %}
+
+    {% for fid, fname in filters.items() %}
+    <button
+      class="filter-btn {% if fid == active_filter %}active{% endif %}"
+      data-filter="{{ fid }}"
+      id="btn-{{ fid }}"
+      onclick="selectFilter('{{ fid }}', '{{ fname }}')"
+      title="{{ fname }}"
+    >
+      <i class="bi {{ icons.get(fid, 'bi-magic') }}"></i>
+      {{ fname }}
+    </button>
+    {% endfor %}
+
+  </div>
+</div>
+
+<!-- Download card -->
+<div class="download-card">
+  <div class="download-info">
+    <h6><i class="bi bi-cloud-download me-2 text-info"></i>Download Processed Video</h6>
+    <p>Re-processes the entire video source with the selected filter and exports a full .mp4 file.</p>
+  </div>
+  <button class="btn-download" id="download-btn" onclick="downloadProcessed()">
+    <span class="spinner-sm" id="dl-spinner"></span>
+    <i class="bi bi-download dl-icon"></i>
+    <span id="dl-text">Download Full Video</span>
+  </button>
+</div>
+
+<script>
+  // ── Upload ──────────────────────────────────────────────────────────────────
+  let selectedFile = null;
+
+  function triggerFileInput() {
+    document.getElementById('video-file-input').click();
+  }
+
+  function handleFileSelected(files) {
+    if (!files || files.length === 0) return;
+    selectedFile = files[0];
+    document.getElementById('upload-btn-text').textContent = 'Upload & Use Video';
+    document.getElementById('upload-btn').disabled = false;
+    setStatus('info', `📋 ${selectedFile.name} selected`);
+    // Auto-start upload
+    uploadVideo();
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('upload-drop-zone').classList.add('dragover');
+  }
+  function handleDragLeave(e) {
+    document.getElementById('upload-drop-zone').classList.remove('dragover');
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-drop-zone').classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleFileSelected(files);
+  }
+
+  function setStatus(type, msg) {
+    const el = document.getElementById('upload-status');
+    el.className = 'show ' + type;
+    el.textContent = msg;
+  }
+
+  function setProgress(pct) {
+    const bar = document.getElementById('upload-progress-bar');
+    const wrap = document.getElementById('upload-progress');
+    wrap.classList.toggle('show', pct > 0 && pct < 100);
+    bar.style.width = pct + '%';
+  }
+
+  function uploadVideo() {
+    if (!selectedFile) return;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    document.getElementById('upload-btn-text').textContent = 'Uploading...';
+    setStatus('info', '⏳ Uploading...');
+    setProgress(10);
+
+    const formData = new FormData();
+    formData.append('video', selectedFile);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/upload', true);
+
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 90);
+        setProgress(pct);
+      }
+    };
+
+    xhr.onload = function() {
+      setProgress(100);
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        if (data.status === 'success') {
+          setStatus('info', '🔄 Switching stream...');
+          // Switch the surveillance system to the new file
+          fetch('/api/start_stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source: data.path })
+          })
+          .then(r => r.json())
+          .then(res => {
+            if (res.status === 'success') {
+              setStatus('success', '✅ Stream switched to: ' + data.filename);
+              document.getElementById('current-source-label').textContent = '📹 ' + data.filename;
+              // Reload both feeds
+              const ts = '?t=' + Date.now();
+              document.getElementById('original-feed').src   = '/video_feed_clean?t=' + ts;
+              document.getElementById('processed-feed').src  = '/video_feed_processed' + ts;
+            } else {
+              setStatus('error', '⚠️ Stream switch failed: ' + res.message);
+            }
+            btn.disabled = false;
+            document.getElementById('upload-btn-text').textContent = 'Upload Another';
+            setProgress(0);
+          })
+          .catch(() => {
+            setStatus('error', '❌ Connection error during stream switch.');
+            btn.disabled = false;
+            setProgress(0);
+          });
+        } else {
+          setStatus('error', '❌ Upload failed: ' + data.message);
+          btn.disabled = false;
+          setProgress(0);
+        }
+      } else {
+        setStatus('error', '❌ Server error during upload.');
+        btn.disabled = false;
+        setProgress(0);
+      }
+    };
+
+    xhr.onerror = function() {
+      setStatus('error', '❌ Network error.');
+      btn.disabled = false;
+      setProgress(0);
+    };
+
+    xhr.send(formData);
+  }
+
+  // ── Filter Selection ────────────────────────────────────────────────────────
+  function selectFilter(filterId, filterName) {
+    fetch('/api/set_filter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filter: filterId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'success') {
+        document.getElementById('active-filter-label').textContent = filterName;
+        document.getElementById('filter-badge').textContent = filterName;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + filterId).classList.add('active');
+        const feed = document.getElementById('processed-feed');
+        feed.src = '/video_feed_processed?t=' + Date.now();
+      } else {
+        console.error('Filter set failed:', data.message);
+      }
+    })
+    .catch(e => console.error('Filter API error:', e));
+  }
+
+  // ── Download ────────────────────────────────────────────────────────────────
+  function downloadProcessed() {
+    const btn = document.getElementById('download-btn');
+    const txt = document.getElementById('dl-text');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    txt.textContent = 'Processing...';
+    const a = document.createElement('a');
+    a.href = '/api/download_processed';
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      txt.textContent = 'Download Full Video';
+    }, 4000);
+  }
+</script>
+{% endblock %}

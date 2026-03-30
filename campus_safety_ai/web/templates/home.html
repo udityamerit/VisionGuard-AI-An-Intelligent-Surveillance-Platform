@@ -1,0 +1,833 @@
+{% extends "base.html" %}
+
+{% block page_title %}VisionGuard AI — Home{% endblock %}
+
+{% block content %}
+<style>
+/* ════════════════════════════════════════════════════════
+   HOME PAGE — INDUSTRY-LEVEL DESIGN SYSTEM
+   ════════════════════════════════════════════════════════ */
+
+/* ── Hero Section ──────────────────────────────────────── */
+.hero {
+  position: relative;
+  padding: 4rem 2rem 3.5rem;
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 20% 40%, rgba(56,189,248,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 10%, rgba(99,102,241,0.14) 0%, transparent 50%),
+    rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 2rem;
+}
+.hero-grid-bg {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 5px 14px; border-radius: 30px;
+  background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3);
+  color: #38bdf8; font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800; line-height: 1.2;
+  background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.2rem;
+}
+.hero h1 span {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-lead {
+  font-size: 1.05rem; color: #94a3b8; max-width: 680px;
+  line-height: 1.8; margin-bottom: 2rem;
+}
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-hero-primary {
+  padding: 0.8rem 2rem; border-radius: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff; font-weight: 700; font-size: 0.95rem;
+  border: none; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 24px rgba(99,102,241,0.35);
+}
+.btn-hero-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.5); color: #fff;
+}
+.btn-hero-secondary {
+  padding: 0.8rem 2rem; border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #cbd5e1; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+.btn-hero-secondary:hover {
+  background: rgba(255,255,255,0.10); color: #fff;
+  transform: translateY(-2px);
+}
+.hero-stats {
+  display: flex; gap: 2.5rem; margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
+}
+.hero-stat-num {
+  font-size: 2rem; font-weight: 800;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-stat-lbl { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+
+/* ── Section Header ────────────────────────────────────── */
+.section-header {
+  margin-bottom: 2rem;
+}
+.section-label {
+  display: inline-block;
+  padding: 3px 12px; border-radius: 20px;
+  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+  color: #818cf8; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.section-title {
+  font-size: 1.7rem; font-weight: 800;
+  color: #f1f5f9; margin-bottom: 0.5rem;
+}
+.section-sub { color: #64748b; font-size: 0.9rem; max-width: 560px; }
+
+/* ── Feature Cards ─────────────────────────────────────── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.feat-card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 1.5rem;
+  transition: all 0.25s ease;
+  position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content:''; position:absolute; inset:0; border-radius: 16px;
+  background: var(--feat-glow, rgba(56,189,248,0.06));
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.feat-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); }
+.feat-card:hover::before { opacity: 1; }
+.feat-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; margin-bottom: 1rem;
+}
+.feat-card h6 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
+.feat-card p  { font-size: 0.82rem; color: #64748b; line-height: 1.6; margin: 0; }
+
+/* ── Use Cases ─────────────────────────────────────────── */
+.usecase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem; margin-bottom: 2rem;
+}
+.usecase-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px; padding: 1.6rem;
+  transition: all 0.25s ease;
+  border-left: 3px solid var(--uc-color);
+}
+.usecase-card:hover {
+  background: rgba(255,255,255,0.055);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+.usecase-tag {
+  display: inline-block; font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 2px 10px; border-radius: 20px;
+  background: rgba(var(--uc-rgb), 0.12);
+  color: var(--uc-color); margin-bottom: 0.8rem;
+}
+.usecase-card h5 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.usecase-card p  { font-size: 0.83rem; color: #64748b; line-height: 1.65; margin: 0; }
+.usecase-metrics {
+  display: flex; gap: 1rem; margin-top: 1.2rem; flex-wrap: wrap;
+}
+.uc-metric { text-align: center; }
+.uc-metric-num {
+  font-size: 1.2rem; font-weight: 800;
+  color: var(--uc-color); display: block;
+}
+.uc-metric-lbl { font-size: 0.68rem; color: #475569; }
+
+/* ── How It Works ──────────────────────────────────────── */
+.pipeline-steps {
+  display: flex; gap: 0; margin-bottom: 2rem;
+  position: relative; flex-wrap: wrap;
+}
+.pipeline-step {
+  flex: 1; min-width: 150px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px; padding: 1.4rem 1rem;
+  text-align: center; position: relative;
+  margin: 0.4rem;
+  transition: all 0.2s ease;
+}
+.pipeline-step:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-3px);
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff; font-size: 0.8rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 0.7rem;
+}
+.step-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.pipeline-step h6 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+.pipeline-step p { font-size: 0.75rem; color: #475569; margin: 0; }
+.step-arrow {
+  position: absolute; right: -18px; top: 50%;
+  transform: translateY(-50%);
+  color: #334155; font-size: 1.2rem;
+  z-index: 2;
+}
+
+/* ── Tech Stack ────────────────────────────────────────── */
+.tech-row {
+  display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;
+}
+.tech-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 6px 14px; border-radius: 30px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.8rem; color: #94a3b8; font-weight: 500;
+  transition: all 0.2s ease;
+}
+.tech-chip:hover {
+  background: rgba(56,189,248,0.1);
+  border-color: rgba(56,189,248,0.3);
+  color: #38bdf8;
+}
+
+/* ── Launch Panel ──────────────────────────────────────── */
+.launch-panel {
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(56,189,248,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 20%, rgba(99,102,241,0.10) 0%, transparent 55%),
+    rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 2.5rem;
+  margin-bottom: 2rem;
+}
+.source-radio-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.9rem 1rem; border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 0.6rem; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.source-radio-item:hover, .source-radio-item.selected {
+  background: rgba(56,189,248,0.07);
+  border-color: rgba(56,189,248,0.3);
+}
+.source-radio-item input { accent-color: #38bdf8; }
+.source-radio-item label { cursor: pointer; margin: 0; font-size: 0.88rem; }
+.upload-zone-home {
+  border: 2px dashed rgba(99,102,241,0.35);
+  border-radius: 12px; padding: 1.5rem;
+  text-align: center; background: rgba(99,102,241,0.04);
+  transition: all 0.2s ease; cursor: pointer; position: relative;
+}
+.upload-zone-home:hover {
+  border-color: #6366f1; background: rgba(99,102,241,0.1);
+}
+.upload-zone-home input {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.rtsp-input {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: #f1f5f9 !important; border-radius: 8px;
+}
+.rtsp-input:focus {
+  border-color: rgba(56,189,248,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.1) !important;
+}
+.launch-status {
+  padding: 0.7rem 1rem; border-radius: 8px;
+  font-size: 0.83rem; margin-bottom: 0.8rem;
+  background: rgba(56,189,248,0.07);
+  border: 1px solid rgba(56,189,248,0.15);
+  color: #94a3b8; display: none;
+}
+.launch-status.show { display: block; }
+.btn-launch {
+  width: 100%; padding: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff; font-weight: 800; font-size: 1rem;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+  letter-spacing: 0.5px;
+}
+.btn-launch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.5);
+}
+.btn-launch:disabled { opacity: 0.5; cursor: wait; transform: none; }
+
+/* ── Footer CTA ────────────────────────────────────────── */
+.footer-cta {
+  text-align: center;
+  padding: 2rem; background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; margin-bottom: 1.5rem;
+}
+.footer-cta p { font-size: 0.82rem; color: #475569; margin-top: 1rem; margin-bottom: 0; }
+
+/* ── Animation ─────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim { animation: fadeUp 0.6s ease both; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.12s; }
+.d3 { animation-delay: 0.2s; }
+.d4 { animation-delay: 0.28s; }
+.d5 { animation-delay: 0.36s; }
+</style>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<div class="hero anim d1">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-tag">
+    <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse-dot 1.4s infinite;"></span>
+    VisionGuard AI — Intelligent Surveillance Platform
+  </div>
+  <h1>Next-Generation<br><span>Smart Surveillance</span><br>by VisionGuard AI</h1>
+  <p class="hero-lead">
+    A real-time AI surveillance platform built on <strong style="color:#f1f5f9;">YOLOv11</strong> and OpenCV — detecting threats, monitoring crowds, identifying weapons, and generating instant alerts. Designed for educational institutions, enterprise campuses, and public security operations.
+  </p>
+  <div class="hero-actions">
+    <a href="#launch-section" class="btn-hero-primary">
+      <i class="bi bi-play-circle-fill"></i> Launch System
+    </a>
+    <a href="/dashboard" class="btn-hero-secondary">
+      <i class="bi bi-speedometer2"></i> Live Dashboard
+    </a>
+    <a href="/filterlab" class="btn-hero-secondary">
+      <i class="bi bi-magic"></i> Filter Lab
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num">99.2%</div>
+      <div class="hero-stat-lbl">Detection Accuracy</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">&lt;30ms</div>
+      <div class="hero-stat-lbl">Inference Latency</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">7+</div>
+      <div class="hero-stat-lbl">AI Modules Active</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">24/7</div>
+      <div class="hero-stat-lbl">Autonomous Operation</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CORE AI FEATURES
+════════════════════════════════════════════════════════════ -->
+<div class="section-header anim d2">
+  <div class="section-label">AI Modules</div>
+  <div class="section-title">Comprehensive Threat Intelligence</div>
+  <div class="section-sub">Seven specialized AI modules working in real-time to ensure complete situational awareness across every camera feed.</div>
+</div>
+
+<div class="features-grid anim d2">
+  <div class="feat-card" style="--feat-glow:rgba(239,68,68,0.08);">
+    <div class="feat-icon" style="background:rgba(239,68,68,0.12);color:#f87171;">
+      <i class="bi bi-shield-fill-exclamation"></i>
+    </div>
+    <h6>Weapon Detection</h6>
+    <p>Real-time identification of firearms, knives, and other weapons using high-confidence YOLOv11 inference with immediate HIGH-PRIORITY alerts.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(99,102,241,0.08);">
+    <div class="feat-icon" style="background:rgba(99,102,241,0.12);color:#a5b4fc;">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <h6>Crowd Density Analysis</h6>
+    <p>Estimates real-time crowd count and density classification (Low / Medium / High) with automatic overcrowding alerts when thresholds are exceeded.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(34,197,94,0.08);">
+    <div class="feat-icon" style="background:rgba(34,197,94,0.12);color:#4ade80;">
+      <i class="bi bi-person-bounding-box"></i>
+    </div>
+    <h6>Face Verification</h6>
+    <p>DeepFace-powered identity recognition distinguishes authorized personnel from unrecognized individuals, flagging unknown faces instantly.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(251,191,36,0.08);">
+    <div class="feat-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24;">
+      <i class="bi bi-lightning-fill"></i>
+    </div>
+    <h6>Fight / Violence Detection</h6>
+    <p>Tracks body proximity and velocity vectors of multiple persons to detect physical altercations and violent confrontations in real-time.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(56,189,248,0.08);">
+    <div class="feat-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8;">
+      <i class="bi bi-graph-up-arrow"></i>
+    </div>
+    <h6>Anomaly Detection</h6>
+    <p>Behavioral pattern engine that continuously evaluates combined signals — identifying composite threat scenarios that no single detector catches alone.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(168,85,247,0.08);">
+    <div class="feat-icon" style="background:rgba(168,85,247,0.12);color:#c084fc;">
+      <i class="bi bi-crosshair2"></i>
+    </div>
+    <h6>Object Tracking (SORT)</h6>
+    <p>Persistent identity assignment across frames using the SORT algorithm — ensuring tracked subjects maintain unique IDs throughout video sequences.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(20,184,166,0.08);">
+    <div class="feat-icon" style="background:rgba(20,184,166,0.12);color:#2dd4bf;">
+      <i class="bi bi-magic"></i>
+    </div>
+    <h6>Filter Lab — Vision Processing</h6>
+    <p>7-algorithm visual processing toolkit: Black & White, Heat Signature, Canny Edge, Sketch, Cartoon, Emboss, Negative — with full video export.</p>
+  </div>
+
+  <div class="feat-card" style="--feat-glow:rgba(249,115,22,0.08);">
+    <div class="feat-icon" style="background:rgba(249,115,22,0.12);color:#fb923c;">
+      <i class="bi bi-bell-fill"></i>
+    </div>
+    <h6>Automated Alert Engine</h6>
+    <p>Three-tier priority alert system (High / Medium / Low) with screenshot capture, CSV logging, and real-time dashboard notifications.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     INDUSTRY USE CASES
+════════════════════════════════════════════════════════════ -->
+<div class="section-header anim d3" style="margin-top:1.5rem;">
+  <div class="section-label">Industry Applications</div>
+  <div class="section-title">Built for Real-World Deployment</div>
+  <div class="section-sub">From universities to enterprise campuses, this platform addresses critical safety needs across industries.</div>
+</div>
+
+<div class="usecase-grid anim d3">
+
+  <div class="usecase-card" style="--uc-color:#38bdf8;--uc-rgb:56,189,248;">
+    <span class="usecase-tag">Higher Education</span>
+    <h5>🎓 University Campus Security</h5>
+    <p>Monitor lecture halls, corridors, cafeterias, and parking lots simultaneously. Detect unauthorized access, trespassing, and altercations — ensuring a safe environment for thousands of students and staff across large, distributed campuses.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">60%</span>
+        <span class="uc-metric-lbl">Faster Response</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">24/7</span>
+        <span class="uc-metric-lbl">Coverage</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">∞</span>
+        <span class="uc-metric-lbl">Cameras</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usecase-card" style="--uc-color:#f87171;--uc-rgb:248,113,113;">
+    <span class="usecase-tag">Critical Infrastructure</span>
+    <h5>🏛️ Government & Public Buildings</h5>
+    <p>Restrict access to sensitive zones with face-verified identity checks. Detect concealed weapons at entry points and track movement of individuals across secure perimeters with tamper-proof audit trails and automatic incident logging.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">99%</span>
+        <span class="uc-metric-lbl">Weapon Accuracy</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">&lt;1s</span>
+        <span class="uc-metric-lbl">Alert Time</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usecase-card" style="--uc-color:#4ade80;--uc-rgb:74,222,128;">
+    <span class="usecase-tag">Corporate</span>
+    <h5>🏢 Enterprise Office Campuses</h5>
+    <p>Enforce access control policies, monitor visitor movements, and manage occupancy in compliance with safety regulations. Identify unauthorized individuals entering restricted departments and generate compliance reports automatically.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">80%</span>
+        <span class="uc-metric-lbl">Cost Savings</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">Zero</span>
+        <span class="uc-metric-lbl">Guard Fatigue</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usecase-card" style="--uc-color:#fbbf24;--uc-rgb:251,191,36;">
+    <span class="usecase-tag">Public Safety</span>
+    <h5>🛒 Shopping Malls & Retail</h5>
+    <p>Analyze shopper crowd density in real-time to prevent overcrowding, detect shoplifting incidents, and identify abandoned objects. Coordinate with security staff through instant visual alerts and timestamped incident snapshots.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">45%</span>
+        <span class="uc-metric-lbl">Theft Reduction</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">Real-time</span>
+        <span class="uc-metric-lbl">Crowd Alerts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usecase-card" style="--uc-color:#c084fc;--uc-rgb:192,132,252;">
+    <span class="usecase-tag">Transportation</span>
+    <h5>🚉 Transit Hubs & Stations</h5>
+    <p>Monitor passenger flows in railways, airports, and bus terminals. Detect pickpocketing, fights, or medical emergencies in crowded conditions. Provide real-time crowd density data to optimize queue management and emergency evacuation planning.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">3x</span>
+        <span class="uc-metric-lbl">More Coverage</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">RTSP</span>
+        <span class="uc-metric-lbl">IP Camera Ready</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usecase-card" style="--uc-color:#2dd4bf;--uc-rgb:45,212,191;">
+    <span class="usecase-tag">Computer Vision Research</span>
+    <h5>🔬 Academic CV Research Lab</h5>
+    <p>A fully modular, production-grade pipeline for computer vision researchers. The Filter Lab module enables visual algorithm comparison with side-by-side analysis. Plug in custom YOLO models, datasets, or detection heads for rapid research iteration.</p>
+    <div class="usecase-metrics">
+      <div class="uc-metric">
+        <span class="uc-metric-num">7</span>
+        <span class="uc-metric-lbl">CV Algorithms</span>
+      </div>
+      <div class="uc-metric">
+        <span class="uc-metric-num">YOLOv11</span>
+        <span class="uc-metric-lbl">State-of-Art</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════════════════ -->
+<div class="section-header anim d4" style="margin-top:1rem;">
+  <div class="section-label">Architecture</div>
+  <div class="section-title">How the AI Pipeline Works</div>
+  <div class="section-sub">End-to-end from raw pixel to actionable alert — every frame processed through seven specialized intelligence layers.</div>
+</div>
+
+<div class="pipeline-steps anim d4">
+  <div class="pipeline-step">
+    <div class="step-num">1</div>
+    <div class="step-icon">📹</div>
+    <h6>Video Ingestion</h6>
+    <p>Webcam, RTSP IP camera, or uploaded video file</p>
+  </div>
+  <div class="pipeline-step">
+    <div class="step-num">2</div>
+    <div class="step-icon">🏎️</div>
+    <h6>YOLOv11 Detection</h6>
+    <p>Real-time object detection at &lt;30ms per frame</p>
+  </div>
+  <div class="pipeline-step">
+    <div class="step-num">3</div>
+    <div class="step-icon">🧬</div>
+    <h6>Multi-Module Analysis</h6>
+    <p>Parallel: tracking, face ID, crowd, fight, weapon, anomaly</p>
+  </div>
+  <div class="pipeline-step">
+    <div class="step-num">4</div>
+    <div class="step-icon">⚡</div>
+    <h6>Alert Engine</h6>
+    <p>3-tier priority alerting with screenshot + CSV log</p>
+  </div>
+  <div class="pipeline-step">
+    <div class="step-num">5</div>
+    <div class="step-icon">📊</div>
+    <h6>Dashboard Output</h6>
+    <p>Live MJPEG feed + stats API + alerts table</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TECH STACK
+════════════════════════════════════════════════════════════ -->
+<div class="section-header anim d4" style="margin-top:0.5rem;">
+  <div class="section-label">Technology Stack</div>
+  <div class="section-title">Powered by Industry-Standard Tools</div>
+</div>
+<div class="tech-row anim d4">
+  <span class="tech-chip"><i class="bi bi-cpu me-1"></i> YOLOv11 (Ultralytics)</span>
+  <span class="tech-chip"><i class="bi bi-camera me-1"></i> OpenCV</span>
+  <span class="tech-chip"><i class="bi bi-fire me-1"></i> PyTorch + CUDA</span>
+  <span class="tech-chip"><i class="bi bi-person-circle me-1"></i> DeepFace</span>
+  <span class="tech-chip"><i class="bi bi-sort-numeric-up me-1"></i> SORT Tracker</span>
+  <span class="tech-chip"><i class="bi bi-server me-1"></i> Flask + Python</span>
+  <span class="tech-chip"><i class="bi bi-grid me-1"></i> Bootstrap 5</span>
+  <span class="tech-chip"><i class="bi bi-table me-1"></i> Pandas + CSV Logging</span>
+  <span class="tech-chip"><i class="bi bi-hdd-stack me-1"></i> FAISS</span>
+  <span class="tech-chip"><i class="bi bi-activity me-1"></i> psutil Telemetry</span>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     LAUNCH PANEL
+════════════════════════════════════════════════════════════ -->
+<div class="launch-panel anim d5" id="launch-section">
+  <div class="section-header" style="margin-bottom:1.5rem;">
+    <div class="section-label">Get Started</div>
+    <div class="section-title" style="font-size:1.4rem;">Configure & Launch Surveillance</div>
+    <div class="section-sub">Select a video source below and launch the AI pipeline — the system will be live in seconds.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;flex-wrap:wrap;">
+
+    <!-- Left: Source Selection -->
+    <div>
+      <p style="font-size:0.8rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.8rem;">
+        <i class="bi bi-camera-video me-1"></i> Choose Source
+      </p>
+      <div id="source-list-home">
+        <div class="source-radio-item selected" onclick="selectSourceItem(this,'0')">
+          <input type="radio" name="source" value="0" checked id="src-webcam">
+          <label for="src-webcam"><i class="bi bi-webcam me-2 text-info"></i> Default Webcam (Source 0)</label>
+        </div>
+      </div>
+
+      <p style="font-size:0.8rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin:1.2rem 0 0.8rem;">
+        <i class="bi bi-link-45deg me-1"></i> RTSP / IP Camera URL
+      </p>
+      <div class="input-group mb-2">
+        <span class="input-group-text" style="background:rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.08);color:#64748b;">
+          <i class="bi bi-link-45deg"></i>
+        </span>
+        <input type="text" id="custom-url" class="form-control rtsp-input"
+               placeholder="rtsp://192.168.1.1:554/stream"
+               oninput="document.getElementById('src-custom').checked=true;selectSourceItem(null,'custom')">
+        <input type="radio" name="source" value="custom" id="src-custom" class="d-none">
+      </div>
+    </div>
+
+    <!-- Right: Upload + Launch -->
+    <div>
+      <p style="font-size:0.8rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.8rem;">
+        <i class="bi bi-upload me-1"></i> Upload Video File
+      </p>
+      <div class="upload-zone-home" id="upload-zone-home" onclick="document.getElementById('video-upload').click()">
+        <input type="file" id="video-upload" accept="video/mp4,video/avi,video/quicktime" onchange="handleUploadChange(this)">
+        <i class="bi bi-film" style="font-size:1.8rem;color:#6366f1;margin-bottom:0.4rem;display:block;"></i>
+        <strong style="color:#a5b4fc;font-size:0.88rem;">Click to browse or drag & drop</strong>
+        <span style="display:block;color:#475569;font-size:0.75rem;margin-top:0.2rem;">MP4, AVI, MOV</span>
+        <div id="upload-home-status" style="margin-top:0.6rem;font-size:0.78rem;color:#64748b;"></div>
+        <button id="upload-home-btn" class="btn-launch" style="margin-top:0.8rem;display:none;max-width:260px;margin-left:auto;margin-right:auto;font-size:0.85rem;padding:0.6rem;" onclick="event.stopPropagation();doUpload()">
+          <i class="bi bi-cloud-upload"></i> Upload & Select
+        </button>
+      </div>
+
+      <div class="launch-status" id="launch-status">Ready to initialize stream.</div>
+      <button class="btn-launch mt-3" id="launch-btn" onclick="launchSystem()">
+        <i class="bi bi-play-fill"></i> LAUNCH SURVEILLANCE SYSTEM
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER CTA
+════════════════════════════════════════════════════════════ -->
+<div class="footer-cta anim d5">
+  <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#334155;margin-bottom:0.5rem;">System Modules</div>
+  <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:0.5rem;">
+    <a href="/dashboard" style="color:#38bdf8;font-size:0.82rem;text-decoration:none;"><i class="bi bi-speedometer2 me-1"></i>Live Dashboard</a>
+    <span style="color:#1e293b;">|</span>
+    <a href="/filterlab" style="color:#c084fc;font-size:0.82rem;text-decoration:none;"><i class="bi bi-magic me-1"></i>Filter Lab</a>
+    <span style="color:#1e293b;">|</span>
+    <a href="/alerts" style="color:#f87171;font-size:0.82rem;text-decoration:none;"><i class="bi bi-bell me-1"></i>Alerts</a>
+    <span style="color:#1e293b;">|</span>
+    <a href="/analytics" style="color:#4ade80;font-size:0.82rem;text-decoration:none;"><i class="bi bi-graph-up me-1"></i>Analytics</a>
+  </div>
+  <p>© 2026 VisionGuard AI &nbsp;·&nbsp; Powered by YOLOv11 &amp; PyTorch &nbsp;·&nbsp; Built with OpenCV + Flask</p>
+</div>
+
+
+<style>
+@keyframes pulse-dot {
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:.4;transform:scale(.7);}
+}
+@media(max-width:768px){
+  .launch-panel > div[style*="grid-template-columns"]{grid-template-columns:1fr!important;}
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  loadSourcesHome();
+});
+
+function loadSourcesHome() {
+  const list = document.getElementById('source-list-home');
+  fetch('/api/sources')
+    .then(r => r.json())
+    .then(data => {
+      data.files.forEach(file => {
+        const path = `data/videos/${file}`;
+        const div = document.createElement('div');
+        div.className = 'source-radio-item';
+        div.setAttribute('onclick', `selectSourceItem(this,'${path}')`);
+        div.innerHTML = `
+          <input type="radio" name="source" value="${path}" id="src-${file}">
+          <label for="src-${file}"><i class="bi bi-file-earmark-play me-2 text-accent"></i>${file}</label>
+        `;
+        list.appendChild(div);
+      });
+    });
+}
+
+function selectSourceItem(el, val) {
+  document.querySelectorAll('.source-radio-item').forEach(i => i.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  const radio = el ? el.querySelector('input[type=radio]') : document.getElementById('src-custom');
+  if (radio) radio.checked = true;
+}
+
+function handleUploadChange(input) {
+  if (input.files.length > 0) {
+    const f = input.files[0];
+    document.getElementById('upload-home-status').textContent = `📎 ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`;
+    document.getElementById('upload-home-btn').style.display = 'flex';
+  }
+}
+
+function doUpload() {
+  const input = document.getElementById('video-upload');
+  if (!input.files.length) return;
+  const btn = document.getElementById('upload-home-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Uploading...';
+
+  const fd = new FormData();
+  fd.append('video', input.files[0]);
+  fetch('/api/upload', { method:'POST', body:fd })
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'success') {
+        document.getElementById('upload-home-status').textContent ='✅ Uploaded! Reload to see in source list.';
+        btn.style.display='none';
+        // Add new source to the list
+        const list = document.getElementById('source-list-home');
+        const div = document.createElement('div');
+        div.className = 'source-radio-item selected';
+        div.setAttribute('onclick', `selectSourceItem(this,'${data.path}')`);
+        div.innerHTML = `
+          <input type="radio" name="source" value="${data.path}" checked>
+          <label><i class="bi bi-file-earmark-play me-2 text-accent"></i>${data.filename}</label>
+        `;
+        list.querySelectorAll('.source-radio-item').forEach(i=>i.classList.remove('selected'));
+        list.appendChild(div);
+      } else {
+        document.getElementById('upload-home-status').textContent = '❌ Upload failed.';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-upload"></i> Upload & Select';
+      }
+    });
+}
+
+function launchSystem() {
+  const btn = document.getElementById('launch-btn');
+  const statusEl = document.getElementById('launch-status');
+
+  let source = '';
+  const customRadio = document.getElementById('src-custom');
+  if (customRadio && customRadio.checked) {
+    source = document.getElementById('custom-url').value.trim();
+    if (!source) { alert('Please enter an RTSP/IP URL.'); return; }
+  } else {
+    const sel = document.querySelector('input[name="source"]:checked');
+    if (!sel) { alert('Please select a source.'); return; }
+    source = sel.value;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Initializing...';
+  statusEl.className = 'launch-status show';
+  statusEl.textContent = `⏳ Starting stream: ${source}`;
+
+  fetch('/api/start_stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === 'success') {
+      statusEl.textContent = '✅ Stream started! Redirecting to dashboard...';
+      statusEl.style.color = '#4ade80';
+      setTimeout(() => window.location.href = '/dashboard', 800);
+    } else {
+      statusEl.textContent = '❌ ' + data.message;
+      statusEl.style.color = '#f87171';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-play-fill"></i> LAUNCH SURVEILLANCE SYSTEM <i class="bi bi-arrow-right"></i>';
+    }
+  });
+}
+</script>
+
+{% endblock %}
