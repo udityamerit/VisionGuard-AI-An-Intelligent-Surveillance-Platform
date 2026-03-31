@@ -282,7 +282,7 @@ AI surveillance systems are increasingly used to automate monitoring tasks and i
 
 ---
 
-# 13. Applications
+# 12. Applications
 
 VisionGuard AI can be deployed in several real-world scenarios including:
 
@@ -295,7 +295,7 @@ VisionGuard AI can be deployed in several real-world scenarios including:
 
 ---
 
-# 14 LAB Filter Processing Module
+# 13 LAB Filter Processing Module
 
 ## Overview
 
