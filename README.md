@@ -645,6 +645,16 @@ The Filter Lab module significantly enhances the VisionGuard AI platform by prov
 
 These filters also serve as preprocessing tools that can improve the effectiveness of AI detection models by emphasizing structural, color, and motion features within surveillance footage.
 
+## Demo Images
+
+Here are some visual demonstrations of the VisionGuard AI platform in action:
+
+![Demo Image 1](campus_safety_ai/Demo%20Images/1.png)
+![Demo Image 2](campus_safety_ai/Demo%20Images/2.png)
+![Demo Image 3](campus_safety_ai/Demo%20Images/3.png)
+![Demo Image 4](campus_safety_ai/Demo%20Images/4.png)
+![Demo Image 5](campus_safety_ai/Demo%20Images/5.png)
+![Demo Image 6](campus_safety_ai/Demo%20Images/6.png)
 
 
 [1]: https://github.com/tharoosha/Vision_Guard_2?utm_source=chatgpt.com "tharoosha/Vision_Guard_2: Vision Guard: AI-powered ..."
